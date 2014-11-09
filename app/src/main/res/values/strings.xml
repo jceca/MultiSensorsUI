@@ -12,5 +12,6 @@
     <string name="t_descpApp">TurnIT - Multimedia</string>
     <string name="descpAcercaDe">Esta aplicación ha sido desarrollada por Javier García Ceca, haciendo uso de los sensores del móvil
     para una mayor personalización del mismo</string>
+    <string name="noActions">No hay acciones</string>
 
 </resources>

@@ -20,6 +20,10 @@
             android:name=".AcercaDe"
             android:label="Acerca De ...">
         </activity>
+        <activity
+            android:name=".ListaAcciones"
+            android:label="Lista de acciones">
+        </activity>
     </application>
 
 </manifest>

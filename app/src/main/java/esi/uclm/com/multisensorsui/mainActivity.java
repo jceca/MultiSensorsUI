@@ -8,24 +8,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-
 public class mainActivity extends Activity {
 
     private Button btnAcercaDe;
+    private Button btnMostrarAcciones;
     private Button btnSalir;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         btnAcercaDe = (Button)this.findViewById(R.id.btnAcercaDe);
+        btnMostrarAcciones = (Button)this.findViewById(R.id.btnMostrarAcciones);
         btnSalir = (Button)this.findViewById(R.id.btnSalir);
 
         btnAcercaDe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 lanzarAcercaDe(null);
+            }
+        });
+
+        btnMostrarAcciones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {lanzarMostrarAcciones(null);
             }
         });
 
@@ -60,6 +66,10 @@ public class mainActivity extends Activity {
 
     public void lanzarAcercaDe(View view){
         Intent i = new Intent(this, AcercaDe.class);
+        startActivity(i);
+    }
+    private void lanzarMostrarAcciones(View view) {
+        Intent i = new Intent(this, ListaAcciones.class);
         startActivity(i);
     }
 }
