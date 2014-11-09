@@ -13,5 +13,7 @@
     <string name="descpAcercaDe">Esta aplicación ha sido desarrollada por Javier García Ceca, haciendo uso de los sensores del móvil
     para una mayor personalización del mismo</string>
     <string name="noActions">No hay acciones</string>
+    <string name="nombreAccionDescp">Nombre de la acción</string>
+    <string name="logoTipoDescp">logo del tipo</string>
 
 </resources>
