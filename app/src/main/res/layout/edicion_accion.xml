@@ -1,42 +1,239 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".mainActivity">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/t_CalibrationX"
+        android:text="@string/orientation_X"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:id="@+id/calibrationX"
+        android:layout_toEndOf="@+id/t_CalibrationX"
+        android:layout_below="@+id/t_CalibrationX"
+        android:layout_alignLeft="@+id/t_CalibrationX"
+        android:layout_alignStart="@+id/t_CalibrationX"
+        android:textSize="30sp"
+        android:text="@string/noData"
+        android:singleLine="true"
+        android:textAlignment="center"
+        android:layout_alignRight="@+id/t_CalibrationX"
+        android:layout_alignEnd="@+id/t_CalibrationX" />
 
-        <TextView
-            android:id="@+id/nombreAccion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center"
-            android:text="@string/nombreAccionDescp"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:text="@string/orientation_Y"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t_CalibrationY"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-            <ImageView
-                android:id="@+id/logo_tipo"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:contentDescription="@string/logoTipoDescp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/calibrationY"
+        android:textSize="30sp"
+        android:text="@string/noData"
+        android:textAlignment="inherit"
+        android:layout_toEndOf="@+id/t_CalibrationX"
+        android:layout_toStartOf="@+id/calibrationZ"
+        android:layout_below="@+id/t_CalibrationY"
+        android:layout_alignLeft="@+id/t_CalibrationY"
+        android:layout_alignStart="@+id/t_CalibrationY"
+        android:layout_alignRight="@+id/t_CalibrationY"
+        android:layout_alignEnd="@+id/t_CalibrationY" />
 
-                </ImageView>
-            <TextView
-                android:id="@+id/tipo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:text="tipo del lugar" />
-        </LinearLayout>
-    </LinearLayout>
+    <TextView
+        android:text="@string/orientation_Z"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t_CalibrationZ"
+        android:layout_above="@+id/calibrationZ"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/calibrationZ"
+        android:layout_toEndOf="@+id/t_CalibrationY"
+        android:textSize="30sp"
+        android:text="@string/noData"
+        android:textAlignment="center"
+        android:layout_alignTop="@+id/calibrationY"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignLeft="@+id/t_CalibrationZ"
+        android:layout_alignStart="@+id/t_CalibrationZ" />
 
-</ScrollView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/t_minY"
+        android:id="@+id/t_minY"
+        android:layout_marginTop="56dp"
+        android:layout_below="@+id/calibrationY"
+        android:layout_alignLeft="@+id/calibrationY"
+        android:layout_alignStart="@+id/calibrationY" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/noData"
+        android:id="@+id/minY"
+        android:textSize="20sp"
+        android:layout_above="@+id/btnCopiarMinZ"
+        android:layout_alignStart="@+id/t_minY" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btnCopiarText"
+        android:id="@+id/btnCopiarMinY"
+        android:layout_below="@+id/minY"
+        android:layout_alignLeft="@+id/minY"
+        android:layout_alignStart="@+id/minY"
+        android:onClick="copiarMinY"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/t_maxY"
+        android:id="@+id/t_maxY"
+        android:layout_below="@+id/t_Rangos"
+        android:layout_alignLeft="@+id/btnCopiarMinY"
+        android:layout_alignStart="@+id/btnCopiarMinY" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/noData"
+        android:id="@+id/maxY"
+        android:layout_alignStart="@+id/t_minY"
+        android:textSize="20sp"
+        android:layout_below="@+id/t_maxY"
+        android:layout_alignLeft="@+id/btnCopiarMinY"
+        android:layout_alignEnd="@+id/minY" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btnCopiarText"
+        android:id="@+id/btnCopiarMaxY"
+        android:layout_alignStart="@+id/minY"
+        android:layout_below="@+id/maxY"
+        android:layout_alignLeft="@+id/btnCopiarMinY"
+        android:onClick="copiarMaxY" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/t_minZ"
+        android:id="@+id/t_minZ"
+        android:layout_alignTop="@+id/t_minY"
+        android:layout_alignLeft="@+id/calibrationZ"
+        android:layout_alignStart="@+id/calibrationZ" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btnCopiarText"
+        android:id="@+id/btnCopiarMinZ"
+        android:layout_below="@+id/minZ"
+        android:layout_alignLeft="@+id/minZ"
+        android:layout_alignStart="@+id/minZ"
+        android:onClick="copiarMinZ"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/noData"
+        android:id="@+id/minZ"
+        android:textSize="20sp"
+        android:layout_below="@+id/t_minZ"
+        android:layout_alignLeft="@+id/t_minZ"
+        android:layout_alignStart="@+id/t_minZ" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/t_maxZ"
+        android:id="@+id/t_maxZ"
+        android:layout_alignTop="@+id/t_maxY"
+        android:layout_alignLeft="@+id/maxZ"
+        android:layout_alignStart="@+id/maxZ" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/noData"
+        android:id="@+id/maxZ"
+        android:textSize="20sp"
+        android:layout_alignStart="@+id/t_minZ"
+        android:layout_below="@+id/t_maxZ"
+        android:layout_alignRight="@+id/minZ"
+        android:layout_alignEnd="@+id/t_maxY" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btnCopiarText"
+        android:id="@+id/btnCopiarMaxZ"
+        android:layout_below="@+id/maxZ"
+        android:layout_alignRight="@+id/btnCopiarMinZ"
+        android:layout_alignEnd="@+id/btnCopiarMinZ"
+        android:onClick="copiarMaxZ" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/t_Rangos"
+        android:id="@+id/t_Rangos"
+        android:layout_below="@+id/btnCopiarMinY"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/t_Accion"
+        android:id="@+id/t_Accion"
+        android:layout_below="@+id/btnCopiarMaxY"
+        android:layout_alignRight="@+id/calibrationX"
+        android:layout_alignEnd="@+id/calibrationX"
+        android:layout_marginTop="33dp" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t_spinnerAction"
+        android:layout_toStartOf="@+id/btnCopiarMaxZ"
+        android:layout_alignTop="@+id/t_Accion"
+        android:layout_alignLeft="@+id/btnCopiarMaxY"
+        android:layout_alignStart="@+id/btnCopiarMaxY"
+        android:spinnerMode="dialog" />
+
+</RelativeLayout>

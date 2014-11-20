@@ -4,7 +4,7 @@
     <string name="app_name">MultiSensorsUI</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="t_nombreAplicacion">FlipIT</string>
+    <string name="t_nombreAplicacion">TurnIT</string>
     <string name="btnMostrarAcciones">Mostrar Acciones</string>
     <string name="btnConfiguracion">Configuración</string>
     <string name="btnAcercaDe">Acerca De</string>
@@ -15,5 +15,26 @@
     <string name="noActions">No hay acciones</string>
     <string name="nombreAccionDescp">Nombre de la acción</string>
     <string name="logoTipoDescp">logo del tipo</string>
+    <string name="nombreAccionElmnt">Nombre Accion</string>
+
+    <string name="orientation_X">Orientation X </string>
+    <string name="orientation_Y">Orientation Y </string>
+    <string name="orientation_Z">Orientation Z </string>
+    <string name="action_reset">Reset</string>
+    <string name="action_config">Settings</string>
+    <string name="noData">0</string>
+    <string name="t_minY">MIN Y</string>
+    <string name="btnCancelar">Cancelar</string>
+    <string name="btnGuardar">Guardar</string>
+    <string name="t_maxY">MAX Y</string>
+    <string name="t_minZ">MIN Z</string>
+    <string name="t_maxZ">MAX Z</string>
+    <string name="btnCopiar">Copiar</string>
+    <string name="btnCopiarText">Copiar</string>
+    <string name="t_Rangos">RANGOS</string>
+    <string name="t_Accion">ACCION</string>
+    <string name="t_nombreAccion">Nombre Accion</string>
+    <string name="action_about">Acerca de</string>
+    <string name="noActionSel">Sin acción seleccionada</string>
 
 </resources>

@@ -10,10 +10,9 @@ public class Accion {
     private float maxY;
     private float minZ;
     private float maxZ;
+    private String accionSel;
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getNombre() { return nombre; }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
@@ -47,11 +46,13 @@ public class Accion {
         return maxZ;
     }
 
-    public void setMaxZ(float maxZ) {
-        this.maxZ = maxZ;
-    }
+    public void setMaxZ(float maxZ) { this.maxZ = maxZ; }
 
-    public Accion (String nombre, float minY, float maxY, float minZ, float maxZ){
+    public String getAccionSel() { return accionSel; }
+
+    public void setAccionSel(String accionSel) { this.accionSel = accionSel; }
+
+    public Accion (String nombre, float minY, float maxY, float minZ, float maxZ, String accionSel){
         this.nombre = nombre;
 
         this.minY = minY;
@@ -59,6 +60,8 @@ public class Accion {
 
         this.minZ = minZ;
         this.maxZ = maxZ;
+
+        this.accionSel = accionSel;
     }
 
     public Accion() {
@@ -73,6 +76,7 @@ public class Accion {
                 ", maxY=" + maxY +
                 ", minZ=" + minZ +
                 ", maxZ=" + maxZ +
+                ", actionSel=" + accionSel +
                 '}';
     }
 }

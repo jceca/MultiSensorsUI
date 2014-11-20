@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/accion_editar"
+        android:title="Editar"
+        android:icon="@drawable/ic_edit_white_18dp"
+        android:orderInCategory="30"
+        android:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/accion_borrar"
+        android:title="Borrar"
+        android:icon="@drawable/ic_delete_white_18dp"
+        android:orderInCategory="40"
+        android:showAsAction="ifRoom"/>
+
+</menu>

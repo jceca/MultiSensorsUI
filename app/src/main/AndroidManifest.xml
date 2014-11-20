@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".mainActivity"
+            android:name="esi.uclm.com.multisensorsui.mainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,13 +17,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AcercaDe"
-            android:label="Acerca De ...">
+            android:name="esi.uclm.com.multisensorsui.AcercaDe"
+            android:label="Acerca De ..." >
         </activity>
         <activity
-            android:name=".ListaAcciones"
-            android:label="Lista de acciones">
+            android:name="esi.uclm.com.multisensorsui.ListaAcciones"
+            android:label="Lista de acciones" >
         </activity>
+        <activity
+            android:name="esi.uclm.com.multisensorsui.EditarAccion"
+            android:label="Editar Acción" >
+        </activity>
+        <activity
+            android:name="esi.uclm.com.multisensorsui.VistaAccion"
+            android:label="Accion" >
+        </activity>
+
+        <service
+            android:name="esi.uclm.com.multisensorsui.MyFirstService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
