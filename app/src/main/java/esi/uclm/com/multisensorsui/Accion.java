@@ -11,6 +11,7 @@ public class Accion {
     private float minZ;
     private float maxZ;
     private String accionSel;
+    private long time;
 
     public String getNombre() { return nombre; }
 
@@ -52,6 +53,10 @@ public class Accion {
 
     public void setAccionSel(String accionSel) { this.accionSel = accionSel; }
 
+    public long getTime(){ return time; }
+
+    public void setTime(long time){ this.time = time; }
+
     public Accion (String nombre, float minY, float maxY, float minZ, float maxZ, String accionSel){
         this.nombre = nombre;
 
@@ -62,6 +67,7 @@ public class Accion {
         this.maxZ = maxZ;
 
         this.accionSel = accionSel;
+        time = System.currentTimeMillis();
     }
 
     public Accion() {
@@ -71,12 +77,13 @@ public class Accion {
     @Override
     public String toString() {
         return "Accion{" +
-                "nombre='" + nombre + '\'' +
+                "nombreAccion='" + nombre + '\'' +
                 ", minY=" + minY +
                 ", maxY=" + maxY +
                 ", minZ=" + minZ +
                 ", maxZ=" + maxZ +
-                ", actionSel=" + accionSel +
+                ", accionSel=" + accionSel +
+                ", time =" + time +
                 '}';
     }
 }

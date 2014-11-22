@@ -3,11 +3,14 @@ package esi.uclm.com.multisensorsui;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.os.IBinder;
+import android.widget.BaseAdapter;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -17,6 +20,9 @@ import static android.util.FloatMath.sin;
 import static android.util.FloatMath.sqrt;
 
 public class MyFirstService extends Service implements FusedGyroscopeSensorListener, SensorEventListener {
+
+    private AudioManager mAudioManager;
+
     public static final float EPSILON = 0.000000001f;
 
     private static final String tag = mainActivity.class.getSimpleName();
@@ -62,6 +68,9 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
     private String calibrationX;
     private String calibrationY;
     private String calibrationZ;
+    private boolean mPhoneIsSilent;
+
+    private BaseAdapter adaptador;
 
 
     public void onCreate() {
@@ -72,6 +81,12 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         initMaths();
         initSensors();
         initFilters();
+
+        Acciones.inicializarBD(this);
+
+        adaptador = new AdaptadorCursorAcciones(this, Acciones.listado());
+
+        mAudioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
 
     }
 
@@ -97,6 +112,7 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
             onGyroscopeSensorChanged(event.values, event.timestamp);
         }
+
     }
 
     @Override
@@ -223,6 +239,9 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         calibrationX = df.format(Math.toDegrees(gyroscopeOrientation[0]));
         calibrationY = df.format(Math.toDegrees(gyroscopeOrientation[1]));
         calibrationZ = df.format(Math.toDegrees(gyroscopeOrientation[2]));
+
+        //comprobarAcciones();
+
     }
 
     /* Mathematical formula for calculating the rotation */
@@ -396,5 +415,27 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void comprobarAcciones(){
+
+        Accion accion = Acciones.elemento(1);
+
+            if(Math.toDegrees(gyroscopeOrientation[1]) > accion.getMinY() && (
+                    Math.toDegrees(gyroscopeOrientation[1]) < accion.getMaxY())
+                    ){
+                if(Math.toDegrees(gyroscopeOrientation[2]) > accion.getMinZ() && (
+                        Math.toDegrees(gyroscopeOrientation[2]) < accion.getMaxZ()
+                )){
+                    if(accion.getAccionSel() == "SILENCIO"){
+                        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+
+                        Toast.makeText(this,"EN SILENCIO ", Toast.LENGTH_LONG).show();
+
+                        mPhoneIsSilent = true;
+                    }
+                }
+            }
     }
 }

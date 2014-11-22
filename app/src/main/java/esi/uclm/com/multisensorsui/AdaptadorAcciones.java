@@ -32,8 +32,9 @@ public class AdaptadorAcciones extends BaseAdapter{
         return vistaReciclada;
     }
 
+    @Override
     public int getCount() {
-        return Acciones.size();
+        return 0;
     }
 
     public Object getItem(int posicion) {

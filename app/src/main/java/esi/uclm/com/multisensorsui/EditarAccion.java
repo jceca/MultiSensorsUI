@@ -140,6 +140,8 @@ public class EditarAccion extends Activity implements SensorEventListener, Fused
                     accion.setNombre(sItems.getSelectedItem().toString());
                     accion.setAccionSel(sItems.getSelectedItem().toString());
                 }
+
+                Acciones.updateAccion((int) id, accion);
                 finish();
                 return true;
             case R.id.accion_cancelar:

@@ -23,7 +23,6 @@ public class VistaAccion extends Activity {
         setContentView(R.layout.vista_accion);
         Bundle extras = getIntent().getExtras();
         id = extras.getLong("id", -1);
-        accion = Acciones.elemento((int) id);
         actualizarVista(accion);
 
     }
@@ -50,6 +49,7 @@ public class VistaAccion extends Activity {
                 Log.d(Acciones.TAG, "VistaAccion - onOptionsItemSelected - id -> "
                         + id);
                 startActivityForResult(intent, RESULTADO_EDITAR);
+
                 return true;
 
             case R.id.accion_borrar:
@@ -62,6 +62,9 @@ public class VistaAccion extends Activity {
     }
 
     public void actualizarVista(Accion accion){
+
+        accion = Acciones.elemento((int) id);
+
         TextView nombreAccion = (TextView) findViewById(R.id.t_nombreAccion);
         nombreAccion.setText(accion.getNombre());
 
