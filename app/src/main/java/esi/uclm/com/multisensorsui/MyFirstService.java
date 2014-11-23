@@ -77,9 +77,8 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         Toast.makeText(this, "Servicio creado",
                 Toast.LENGTH_SHORT).show();
 
-        initUI();
-        initMaths();
         initSensors();
+        initMaths();
         initFilters();
 
         Acciones.inicializarBD(this);
@@ -95,6 +94,10 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         Toast.makeText(this,"Servicio arrancado "+ idArranque,
                 Toast.LENGTH_SHORT).show();
         registerListeners();
+
+        initUI();
+        initFilters();
+
         return START_STICKY;
     }
 
@@ -125,6 +128,7 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         calibrationX = (df.format(Math.toDegrees(angularVelocity[0])));
         calibrationY = (df.format(Math.toDegrees(angularVelocity[1])));
         calibrationZ = (df.format(Math.toDegrees(angularVelocity[2])));
+
     }
 
     public void onAccelerationSensorChanged(float[] acceleration, long timeStamp) {
@@ -240,7 +244,7 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         calibrationY = df.format(Math.toDegrees(gyroscopeOrientation[1]));
         calibrationZ = df.format(Math.toDegrees(gyroscopeOrientation[2]));
 
-        //comprobarAcciones();
+        comprobarAcciones();
 
     }
 
@@ -420,22 +424,25 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
     public void comprobarAcciones(){
 
         Accion accion = Acciones.elemento(1);
+        String acc = "SILENCIO";
 
-            if(Math.toDegrees(gyroscopeOrientation[1]) > accion.getMinY() && (
-                    Math.toDegrees(gyroscopeOrientation[1]) < accion.getMaxY())
+        if(Double.parseDouble(calibrationY) == 0.0 && Double.parseDouble(calibrationZ) == 0.0){
+            return;
+        }else{
+            if(((Double.parseDouble(calibrationY)) >= accion.getMinY()) &&
+                    (Double.parseDouble(calibrationY) <= accion.getMaxY())
                     ){
-                if(Math.toDegrees(gyroscopeOrientation[2]) > accion.getMinZ() && (
-                        Math.toDegrees(gyroscopeOrientation[2]) < accion.getMaxZ()
+                if((Double.parseDouble(calibrationZ)) >= accion.getMinZ() &&
+                        (Double.parseDouble(calibrationZ) <= accion.getMaxZ()
                 )){
-                    if(accion.getAccionSel() == "SILENCIO"){
+                    if(accion.getNombre().equalsIgnoreCase(acc) && mAudioManager.getRingerMode() == 2){
                         mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                         mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
 
                         Toast.makeText(this,"EN SILENCIO ", Toast.LENGTH_LONG).show();
-
-                        mPhoneIsSilent = true;
                     }
                 }
             }
+        }
     }
 }
