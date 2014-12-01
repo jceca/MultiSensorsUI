@@ -9,8 +9,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.IBinder;
-import android.widget.BaseAdapter;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -25,7 +25,6 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
 
     public static final float EPSILON = 0.000000001f;
 
-    private static final String tag = mainActivity.class.getSimpleName();
     private static final float NS2S = 1.0f / 1000000000.0f;
     private static final int MEAN_FILTER_WINDOW = 10;
     private static final int MIN_SAMPLE_COUNT = 30;
@@ -68,14 +67,19 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
     private String calibrationX;
     private String calibrationY;
     private String calibrationZ;
-    private boolean mPhoneIsSilent;
 
-    private BaseAdapter adaptador;
+    private Cursor cAcciones;
+
+    /* SHAKE DETECTOR VARIABLES*/
+    private long last_update = 0, last_movement = 0;
+    private float prevX = 0, prevY = 0, prevZ = 0;
+    private float curX = 0, curY = 0, curZ = 0;
+    private int mCount = 0;
 
 
     public void onCreate() {
-        Toast.makeText(this, "Servicio creado",
-                Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Servicio creado",
+//                Toast.LENGTH_SHORT).show();
 
         initSensors();
         initMaths();
@@ -83,16 +87,14 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
 
         Acciones.inicializarBD(this);
 
-        adaptador = new AdaptadorCursorAcciones(this, Acciones.listado());
-
         mAudioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
 
     }
 
     @Override
     public int onStartCommand(Intent intenc, int flags, int idArranque) {
-        Toast.makeText(this,"Servicio arrancado "+ idArranque,
-                Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this,"Servicio arrancado "+ idArranque,
+//                Toast.LENGTH_SHORT).show();
         registerListeners();
 
         initUI();
@@ -141,6 +143,43 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
 
         /* Count the number of counts */
         accelerationSampleCount++;
+/*
+            long current_time = timeStamp;
+
+            curX = acceleration[0];
+            curY = acceleration[1];
+            curZ = acceleration[2];
+
+            if (prevX == 0) {
+                last_update = current_time;
+                last_movement = current_time;
+                prevX = curX;
+            }
+
+            long time_difference = current_time - last_update;
+            if (time_difference > 0) {
+                float movement = Math.abs(curX - prevX / time_difference);
+                int limit = 500000000;
+                float min_movement = 19;
+                if (movement > min_movement) {
+                    if (current_time - last_movement >= limit) {
+                        Toast.makeText(getApplicationContext(), "Hay movimiento de " + movement, Toast.LENGTH_SHORT).show();
+                        mCount++;
+                    }
+                    last_movement = current_time;
+                }
+
+                if(current_time - last_movement > 700000000){
+                    comprobarAccionesShake(mCount);
+                    mCount = 0;
+                }
+
+                prevX = curX;
+                prevY = curY;
+                prevZ = curZ;
+
+                last_update = current_time;
+        }*/
 
         /**
          * Only determine the initial orientation after the acceleration sensor
@@ -155,6 +194,20 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
             calculateOrientation();
         }
     }
+/*
+    private void comprobarAccionesShake(int mCount) {
+
+        switch (mCount){
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            default:
+                break;
+        }
+    }*/
 
     public void onMagneticSensorChanged(float[] magnetic, long timeStamp) {
         /* Copy of the values of the sensor inputs */
@@ -244,7 +297,7 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         calibrationY = df.format(Math.toDegrees(gyroscopeOrientation[1]));
         calibrationZ = df.format(Math.toDegrees(gyroscopeOrientation[2]));
 
-        comprobarAcciones();
+        comprobarAccionesOrientation();
 
     }
 
@@ -421,28 +474,32 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public void comprobarAcciones(){
+    public void comprobarAccionesOrientation(){
+        cAcciones = Acciones.listado();
 
-        Accion accion = Acciones.elemento(1);
-        String acc = "SILENCIO";
+        while(cAcciones.moveToNext()){
 
-        if(Double.parseDouble(calibrationY) == 0.0 && Double.parseDouble(calibrationZ) == 0.0){
-            return;
-        }else{
-            if(((Double.parseDouble(calibrationY)) >= accion.getMinY()) &&
-                    (Double.parseDouble(calibrationY) <= accion.getMaxY())
-                    ){
-                if((Double.parseDouble(calibrationZ)) >= accion.getMinZ() &&
-                        (Double.parseDouble(calibrationZ) <= accion.getMaxZ()
-                )){
-                    if(accion.getNombre().equalsIgnoreCase(acc) && mAudioManager.getRingerMode() == 2){
-                        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+            if(Double.parseDouble(calibrationY) == 0.0 && Double.parseDouble(calibrationZ) == 0.0){
+                return;
+            }else{
+                if(((Double.parseDouble(calibrationY)) >= cAcciones.getFloat(2)) &&
+                        (Double.parseDouble(calibrationY) <= cAcciones.getFloat(3))
+                        ){
+                    if((Double.parseDouble(calibrationZ)) >= cAcciones.getFloat(4) &&
+                            (Double.parseDouble(calibrationZ) <= cAcciones.getFloat(5)
+                            )){
+                        if(cAcciones.getString(6).equalsIgnoreCase("SILENCIO") && mAudioManager.getRingerMode() == 2){
+                            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 
-                        Toast.makeText(this,"EN SILENCIO ", Toast.LENGTH_LONG).show();
+                        }else if (cAcciones.getString(6).equalsIgnoreCase("CORREO")){
+                            Intent intent = new Intent (Intent.ACTION_VIEW , Uri.parse("mailto:" + "your_email"));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
                     }
                 }
             }
         }
+        cAcciones.close();
     }
 }
