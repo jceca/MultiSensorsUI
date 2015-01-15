@@ -15,6 +15,8 @@ import android.widget.ListView;
 public class ListaAcciones extends ListActivity {
 
     public BaseAdapter adaptador;
+    private Intent intent;
+    private long id;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,9 +53,15 @@ public class ListaAcciones extends ListActivity {
          **/
         switch (item.getItemId()){
 
-            case R.id.accion_añadir:
-                Intent intent = new Intent(this, EditarAccion.class);
-                long id = Acciones.nuevo();
+            case R.id.accion_añadir_orientation:
+                intent = new Intent(this, EditarAccionOrientation.class);
+                id = Acciones.nuevo();
+                intent.putExtra("id", id);
+                startActivityForResult(intent, 0);
+                return true;
+            case R.id.accion_añadir_shaking:
+                intent = new Intent(this, EditarAccionShaking.class);
+                id = Acciones.nuevo();
                 intent.putExtra("id", id);
                 startActivityForResult(intent, 0);
                 return true;

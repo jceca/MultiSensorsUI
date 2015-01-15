@@ -14,19 +14,28 @@ public class Acciones {
 
     private static AccionesBD accionesBD;
 
+    public static void inicializarBD(Context contexto){
+        accionesBD = new AccionesBD(contexto);
+    }
+
     public static Accion elemento(int id) {
         Accion accion = null;
         SQLiteDatabase bd = accionesBD.getReadableDatabase();
         Cursor cursor = bd.rawQuery("SELECT * FROM acciones WHERE _id = " + id, null);
         if (cursor.moveToNext()){
             accion = new Accion();
-            accion.setNombre(cursor.getString(1));
-            accion.setMinY(cursor.getFloat(2));
-            accion.setMaxY(cursor.getFloat(3));
-            accion.setMinZ(cursor.getFloat(4));
-            accion.setMaxZ(cursor.getFloat(5));
-            accion.setAccionSel(cursor.getString(6));
-            accion.setTime(cursor.getLong(7));
+            accion.setTipo(cursor.getInt(1));
+            accion.setNombre(cursor.getString(2));
+            accion.setAccionSel(cursor.getString(8));
+            accion.setTime(cursor.getLong(9));
+            if(cursor.getInt(1) == 0){
+                accion.setMinY(cursor.getFloat(3));
+                accion.setMaxY(cursor.getFloat(4));
+                accion.setMinZ(cursor.getFloat(5));
+                accion.setMaxZ(cursor.getFloat(6));
+            }else{
+                accion.setNShakes(cursor.getInt(7));
+            }
         }
 
         cursor.close();
@@ -42,6 +51,8 @@ public class Acciones {
         ", maxY = " + accion.getMaxY() +
         ", minZ = " + accion.getMinZ() +
         ", maxZ = " + accion.getMaxZ() +
+        ", nShakes = " + accion.getNShakes() +
+        ", tipo = " + accion.getTipo() +
         ", accionSel = '" + accion.getAccionSel() +
         "', time = " + accion.getTime() +
         " WHERE _id = "+ id);
@@ -71,10 +82,6 @@ public class Acciones {
         SQLiteDatabase bd = accionesBD.getWritableDatabase();
         bd.execSQL("DELETE FROM acciones WHERE _id =" + id);
         bd.close();
-    }
-
-    public static void inicializarBD(Context contexto){
-        accionesBD = new AccionesBD(contexto);
     }
 
     public static Cursor listado() {

@@ -17,17 +17,19 @@ public class AccionesBD extends SQLiteOpenHelper {
 
         bd.execSQL("CREATE TABLE acciones ("+
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
+                "tipo INTEGER, "+
                 "nombreAccion TEXT, "+
                 "minY FLOAT, "+
                 "maxY FLOAT, "+
                 "minZ FLOAT, "+
                 "maxZ FLOAT, "+
+                "nShakes INTEGER, "+
                 "accionSel TEXT, "+
                 "time LONG)");
 
         bd.execSQL("INSERT INTO acciones VALUES (null, "+
-        "'SILENCIO', "+
-        " -0.5, -0.5, -0.5, 0.5, 'SILENCIO', "+ System.currentTimeMillis()+")");
+        "0, 'SILENCIO', "+
+        " -0.5, -0.5, -0.5, 0.5, 0, 'SILENCIO', "+ System.currentTimeMillis()+")");
     }
 
     @Override

@@ -5,13 +5,21 @@ package esi.uclm.com.multisensorsui;
  */
 public class Accion {
 
+    private int tipo;
     private String nombre;
     private float minY;
     private float maxY;
     private float minZ;
     private float maxZ;
+    private int nShakes;
     private String accionSel;
     private long time;
+
+    public int getTipo(){
+        return  tipo;
+    }
+
+    public void setTipo(int tipo){ this.tipo = tipo; }
 
     public String getNombre() { return nombre; }
 
@@ -49,6 +57,12 @@ public class Accion {
 
     public void setMaxZ(float maxZ) { this.maxZ = maxZ; }
 
+    public int getNShakes(){
+        return nShakes;
+    }
+
+    public void setNShakes(int nShakes){ this.nShakes = nShakes; }
+
     public String getAccionSel() { return accionSel; }
 
     public void setAccionSel(String accionSel) { this.accionSel = accionSel; }
@@ -57,7 +71,9 @@ public class Accion {
 
     public void setTime(long time){ this.time = time; }
 
-    public Accion (String nombre, float minY, float maxY, float minZ, float maxZ, String accionSel){
+    public Accion (int tipo, String nombre, float minY, float maxY, float minZ, float maxZ, int nShakes, String accionSel){
+        this.tipo = tipo;
+
         this.nombre = nombre;
 
         this.minY = minY;
@@ -65,6 +81,8 @@ public class Accion {
 
         this.minZ = minZ;
         this.maxZ = maxZ;
+
+        this.nShakes = nShakes;
 
         this.accionSel = accionSel;
         time = System.currentTimeMillis();
@@ -77,13 +95,15 @@ public class Accion {
     @Override
     public String toString() {
         return "Accion{" +
-                "nombreAccion='" + nombre + '\'' +
+                " tipo=" + tipo + '\'' +
+                "nombre='" + nombre +
                 ", minY=" + minY +
                 ", maxY=" + maxY +
                 ", minZ=" + minZ +
                 ", maxZ=" + maxZ +
-                ", accionSel=" + accionSel +
-                ", time =" + time +
+                ", nShakes=" + nShakes +
+                ", accionSel='" + accionSel + '\'' +
+                ", time=" + time +
                 '}';
     }
 }

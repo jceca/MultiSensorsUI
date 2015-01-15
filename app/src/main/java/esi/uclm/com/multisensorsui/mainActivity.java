@@ -68,6 +68,10 @@ public class mainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onResume(){
+        super.onResume();  // Always call the superclass method first
+    }
+
     public void lanzarAcercaDe(View view){
         Intent i = new Intent(this, AcercaDe.class);
         startActivity(i);

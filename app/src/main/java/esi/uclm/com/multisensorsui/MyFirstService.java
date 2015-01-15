@@ -11,6 +11,8 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.IBinder;
+import android.text.format.Time;
+import android.util.FloatMath;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -20,6 +22,10 @@ import static android.util.FloatMath.sin;
 import static android.util.FloatMath.sqrt;
 
 public class MyFirstService extends Service implements FusedGyroscopeSensorListener, SensorEventListener {
+
+    private static final float SHAKE_THRESHOLD_GRAVITY = 2.7F;
+    private static final long SHAKE_SLOP_TIME_MS = 500;
+    private static final int SHAKE_COUNT_RESET_TIME_MS = 3000;
 
     private AudioManager mAudioManager;
 
@@ -71,10 +77,14 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
     private Cursor cAcciones;
 
     /* SHAKE DETECTOR VARIABLES*/
-    private long last_update = 0, last_movement = 0;
-    private float prevX = 0, prevY = 0, prevZ = 0;
+    //private long last_update = 0, last_movement = 0;
+    //private float prevX = 0, prevY = 0, prevZ = 0;
     private float curX = 0, curY = 0, curZ = 0;
     private int mCount = 0;
+    private int nShakeFinal;
+
+    private long mShakeTimestamp;
+    private int mShakeCount;
 
 
     public void onCreate() {
@@ -130,7 +140,6 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         calibrationX = (df.format(Math.toDegrees(angularVelocity[0])));
         calibrationY = (df.format(Math.toDegrees(angularVelocity[1])));
         calibrationZ = (df.format(Math.toDegrees(angularVelocity[2])));
-
     }
 
     public void onAccelerationSensorChanged(float[] acceleration, long timeStamp) {
@@ -143,43 +152,16 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
 
         /* Count the number of counts */
         accelerationSampleCount++;
-/*
-            long current_time = timeStamp;
 
-            curX = acceleration[0];
-            curY = acceleration[1];
-            curZ = acceleration[2];
+        /* SHAKES COUNTER */
 
-            if (prevX == 0) {
-                last_update = current_time;
-                last_movement = current_time;
-                prevX = curX;
-            }
+        nShakeFinal = counter(acceleration, timeStamp);
 
-            long time_difference = current_time - last_update;
-            if (time_difference > 0) {
-                float movement = Math.abs(curX - prevX / time_difference);
-                int limit = 500000000;
-                float min_movement = 19;
-                if (movement > min_movement) {
-                    if (current_time - last_movement >= limit) {
-                        Toast.makeText(getApplicationContext(), "Hay movimiento de " + movement, Toast.LENGTH_SHORT).show();
-                        mCount++;
-                    }
-                    last_movement = current_time;
-                }
+        if(nShakeFinal > 0){
+            comprobarAcciones(nShakeFinal);
+        }
 
-                if(current_time - last_movement > 700000000){
-                    comprobarAccionesShake(mCount);
-                    mCount = 0;
-                }
 
-                prevX = curX;
-                prevY = curY;
-                prevZ = curZ;
-
-                last_update = current_time;
-        }*/
 
         /**
          * Only determine the initial orientation after the acceleration sensor
@@ -194,20 +176,70 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
             calculateOrientation();
         }
     }
-/*
-    private void comprobarAccionesShake(int mCount) {
 
-        switch (mCount){
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            default:
-                break;
+    public int counter(float[] acceleration, long timeStamp) {
+
+        synchronized (this) {
+
+            if (curX == 0 && curY == 0 && curZ == 0) {
+                curX = acceleration[0];
+                curY = acceleration[1];
+                curZ = acceleration[2];
+
+                float gX = curX / SensorManager.GRAVITY_EARTH;
+                float gY = curY / SensorManager.GRAVITY_EARTH;
+                float gZ = curZ / SensorManager.GRAVITY_EARTH;
+
+                // gForce will be close to 1 when there is no movement.
+                float gForce = FloatMath.sqrt(gX * gX + gY * gY + gZ * gZ);
+
+                if (gForce > SHAKE_THRESHOLD_GRAVITY) {
+                    final long now = System.currentTimeMillis();
+                    // ignore shake events too close to each other (500ms)
+                    if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
+
+                    }
+
+                    // reset the shake count after 3 seconds of no shakes
+                    if (mShakeTimestamp + SHAKE_COUNT_RESET_TIME_MS < now) {
+                        mShakeCount = 0;
+                    }
+
+                    mShakeTimestamp = now;
+                    Toast.makeText(getApplicationContext(), "Hay movimiento", Toast.LENGTH_SHORT).show();
+                    mShakeCount++;
+                }
+            }
         }
-    }*/
+        return mShakeCount;
+    }
+
+            /*curX = acceleration[0];
+
+            if (prevX == 0) {
+                last_update = current_time;
+                last_movement = current_time;
+                prevX = curX;
+            }
+
+            long time_difference = current_time - last_update;
+
+            if (time_difference > 0) {
+                float movement = Math.abs(curX - prevX / time_difference);
+                int limit = 500000000;
+                float min_movement = 19;
+                if (movement > min_movement) {
+                    if (current_time - last_movement >= limit) {
+                        Toast.makeText(getApplicationContext(), "Hay movimiento de " + movement, Toast.LENGTH_SHORT).show();
+                        mCount++;
+                    }
+                    last_movement = current_time;
+                }
+
+                last_update = current_time;
+            }
+
+            prevX = curX;*/
 
     public void onMagneticSensorChanged(float[] magnetic, long timeStamp) {
         /* Copy of the values of the sensor inputs */
@@ -297,7 +329,7 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         calibrationY = df.format(Math.toDegrees(gyroscopeOrientation[1]));
         calibrationZ = df.format(Math.toDegrees(gyroscopeOrientation[2]));
 
-        comprobarAccionesOrientation();
+        comprobarAcciones();
 
     }
 
@@ -474,28 +506,54 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public void comprobarAccionesOrientation(){
+    public void comprobarAcciones(){
         cAcciones = Acciones.listado();
 
-        while(cAcciones.moveToNext()){
+        while(cAcciones.moveToNext()) {
+            if (Integer.parseInt(cAcciones.getString(1)) == 0) {
 
-            if(Double.parseDouble(calibrationY) == 0.0 && Double.parseDouble(calibrationZ) == 0.0){
-                return;
-            }else{
-                if(((Double.parseDouble(calibrationY)) >= cAcciones.getFloat(2)) &&
-                        (Double.parseDouble(calibrationY) <= cAcciones.getFloat(3))
-                        ){
-                    if((Double.parseDouble(calibrationZ)) >= cAcciones.getFloat(4) &&
-                            (Double.parseDouble(calibrationZ) <= cAcciones.getFloat(5)
-                            )){
-                        if(cAcciones.getString(6).equalsIgnoreCase("SILENCIO") && mAudioManager.getRingerMode() == 2){
+                if (calibrationY == null && calibrationZ == null) {
+                    return;
+                } else {
+                    if (((Double.parseDouble(calibrationY)) >= cAcciones.getFloat(3)) &&
+                            (Double.parseDouble(calibrationY) <= cAcciones.getFloat(4))
+                            ) {
+                        if ((Double.parseDouble(calibrationZ)) >= cAcciones.getFloat(5) &&
+                                (Double.parseDouble(calibrationZ) <= cAcciones.getFloat(6)
+                                )) {
+                            if (cAcciones.getString(8).equalsIgnoreCase("SILENCIO") && mAudioManager.getRingerMode() == 2) {
+                                mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+
+                            } else if (cAcciones.getString(8).equalsIgnoreCase("CORREO")) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + "your_email"));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        cAcciones.close();
+    }
+
+    public void comprobarAcciones(int sender){
+        cAcciones = Acciones.listado();
+
+        while(cAcciones.moveToNext()) {
+            if(cAcciones.getString(1).equalsIgnoreCase("1")){
+                if(Integer.parseInt(cAcciones.getString(7)) == sender) {
+                    switch (sender) {
+                        case 1:
                             mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-
-                        }else if (cAcciones.getString(6).equalsIgnoreCase("CORREO")){
-                            Intent intent = new Intent (Intent.ACTION_VIEW , Uri.parse("mailto:" + "your_email"));
+                            mCount = 0;
+                            break;
+                        case 2:
+                            mCount = 0;
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + "your_email"));
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-                        }
                     }
                 }
             }

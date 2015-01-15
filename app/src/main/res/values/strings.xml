@@ -36,5 +36,6 @@
     <string name="t_nombreAccion">Nombre Accion</string>
     <string name="action_about">Acerca de</string>
     <string name="noActionSel">Sin acción seleccionada</string>
+    <string name="shakesT">Nº Shakes</string>
 
 </resources>

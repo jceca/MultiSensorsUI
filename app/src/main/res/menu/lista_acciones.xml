@@ -2,10 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/accion_añadir"
+        android:id="@+id/accion_añadir_orientation"
         android:title="Nuevo"
         android:icon="@drawable/ic_add_white_18dp"
         android:orderInCategory="30"
         android:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/accion_añadir_shaking"
+        android:title="Nuevo"
+        android:icon="@drawable/ic_add_white_18dp"
+        android:orderInCategory="30"
+        android:showAsAction="ifRoom"/>
+
+
 
 </menu>

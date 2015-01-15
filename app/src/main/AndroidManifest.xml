@@ -25,8 +25,12 @@
             android:label="Lista de acciones" >
         </activity>
         <activity
-            android:name="esi.uclm.com.multisensorsui.EditarAccion"
-            android:label="Editar Acción" >
+            android:name=".EditarAccionOrientation"
+            android:label="Editar Acción - Orientación" >
+        </activity>
+        <activity
+            android:name=".EditarAccionShaking"
+            android:label="Editar Acción - Shaking" >
         </activity>
         <activity
             android:name="esi.uclm.com.multisensorsui.VistaAccion"

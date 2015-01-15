@@ -5,14 +5,11 @@ package esi.uclm.com.multisensorsui;
  */
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,7 +27,7 @@ import java.util.List;
 
 import static android.util.FloatMath.*;
 
-public class EditarAccion extends Activity implements SensorEventListener, FusedGyroscopeSensorListener, View.OnClickListener {
+public class EditarAccionOrientation extends Activity implements SensorEventListener, FusedGyroscopeSensorListener, View.OnClickListener {
 
     public static final float EPSILON = 0.000000001f;
 
@@ -94,7 +91,7 @@ public class EditarAccion extends Activity implements SensorEventListener, Fused
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.edicion_accion);
+        setContentView(R.layout.edicion_accion_orientation);
 
         Bundle extras = getIntent().getExtras();
         id = extras.getLong("id", -1);
