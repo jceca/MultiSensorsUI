@@ -80,4 +80,9 @@ public class mainActivity extends Activity {
         Intent i = new Intent(this, ListaAcciones.class);
         startActivity(i);
     }
+
+    public void onDestroy(){
+        super.onDestroy();
+
+    }
 }

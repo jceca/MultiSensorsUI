@@ -195,7 +195,6 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
                 float min_movement = 1E-6f;
                 if (movement > min_movement) {
                     if (current_time - last_movement >= limit) {
-                        Toast.makeText(getApplicationContext(), "Hay movimiento de " + movement, Toast.LENGTH_SHORT).show();
                         mShakeCount++;
                     }
                     last_movement = current_time;

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MultiSensorsUI.iml" filepath="$PROJECT_DIR$/MultiSensorsUI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TurnIT.iml" filepath="$PROJECT_DIR$/TurnIT.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
