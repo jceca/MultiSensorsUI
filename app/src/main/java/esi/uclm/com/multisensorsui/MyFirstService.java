@@ -11,21 +11,17 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.IBinder;
-import android.text.format.Time;
-import android.util.FloatMath;
+import android.provider.CalendarContract;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
+import java.util.Calendar;
 
 import static android.util.FloatMath.cos;
 import static android.util.FloatMath.sin;
 import static android.util.FloatMath.sqrt;
 
 public class MyFirstService extends Service implements FusedGyroscopeSensorListener, SensorEventListener {
-
-    private static final float SHAKE_THRESHOLD_GRAVITY = 2.7F;
-    private static final long SHAKE_SLOP_TIME_MS = 500;
-    private static final int SHAKE_COUNT_RESET_TIME_MS = 3000;
 
     private AudioManager mAudioManager;
 
@@ -77,14 +73,14 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
     private Cursor cAcciones;
 
     /* SHAKE DETECTOR VARIABLES*/
-    //private long last_update = 0, last_movement = 0;
-    //private float prevX = 0, prevY = 0, prevZ = 0;
-    private float curX = 0, curY = 0, curZ = 0;
-    private int mCount = 0;
+    private float curX = 0;
     private int nShakeFinal;
 
-    private long mShakeTimestamp;
-    private int mShakeCount;
+    private float prevX;
+    private int mCount;
+    private long last_update;
+    private long last_movement;
+    private int mShakeCount = 0;
 
 
     public void onCreate() {
@@ -159,6 +155,7 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
 
         if(nShakeFinal > 0){
             comprobarAcciones(nShakeFinal);
+            nShakeFinal = 0;
         }
 
 
@@ -180,35 +177,31 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
     public int counter(float[] acceleration, long timeStamp) {
 
         synchronized (this) {
+            mShakeCount = 0;
+            long current_time = timeStamp;
 
-            if (curX == 0 && curY == 0 && curZ == 0) {
-                curX = acceleration[0];
-                curY = acceleration[1];
-                curZ = acceleration[2];
+            curX = acceleration[0];
 
-                float gX = curX / SensorManager.GRAVITY_EARTH;
-                float gY = curY / SensorManager.GRAVITY_EARTH;
-                float gZ = curZ / SensorManager.GRAVITY_EARTH;
+            if (prevX == 0) {
+                last_update = current_time;
+                last_movement = current_time;
+                prevX = curX;
+            }
 
-                // gForce will be close to 1 when there is no movement.
-                float gForce = FloatMath.sqrt(gX * gX + gY * gY + gZ * gZ);
-
-                if (gForce > SHAKE_THRESHOLD_GRAVITY) {
-                    final long now = System.currentTimeMillis();
-                    // ignore shake events too close to each other (500ms)
-                    if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
-
+            long time_difference = current_time - last_update;
+            if (time_difference > 0) {
+                float movement = Math.abs((curX) - (prevX)) / time_difference;
+                int limit = 1500;
+                float min_movement = 1E-6f;
+                if (movement > min_movement) {
+                    if (current_time - last_movement >= limit) {
+                        Toast.makeText(getApplicationContext(), "Hay movimiento de " + movement, Toast.LENGTH_SHORT).show();
+                        mShakeCount++;
                     }
-
-                    // reset the shake count after 3 seconds of no shakes
-                    if (mShakeTimestamp + SHAKE_COUNT_RESET_TIME_MS < now) {
-                        mShakeCount = 0;
-                    }
-
-                    mShakeTimestamp = now;
-                    Toast.makeText(getApplicationContext(), "Hay movimiento", Toast.LENGTH_SHORT).show();
-                    mShakeCount++;
+                    last_movement = current_time;
                 }
+                prevX = curX;
+                last_update = current_time;
             }
         }
         return mShakeCount;
@@ -510,30 +503,29 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         cAcciones = Acciones.listado();
 
         while(cAcciones.moveToNext()) {
-            if (Integer.parseInt(cAcciones.getString(1)) == 0) {
+            if (cAcciones.getString(1) != null) {
+                if (Integer.parseInt(cAcciones.getString(1)) == 0) {
 
-                if (calibrationY == null && calibrationZ == null) {
-                    return;
-                } else {
-                    if (((Double.parseDouble(calibrationY)) >= cAcciones.getFloat(3)) &&
-                            (Double.parseDouble(calibrationY) <= cAcciones.getFloat(4))
-                            ) {
-                        if ((Double.parseDouble(calibrationZ)) >= cAcciones.getFloat(5) &&
-                                (Double.parseDouble(calibrationZ) <= cAcciones.getFloat(6)
-                                )) {
-                            if (cAcciones.getString(8).equalsIgnoreCase("SILENCIO") && mAudioManager.getRingerMode() == 2) {
-                                mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                    if (calibrationY == null && calibrationZ == null) {
+                        return;
+                    } else {
+                        if (((Double.parseDouble(calibrationY)) >= cAcciones.getFloat(3)) &&
+                                (Double.parseDouble(calibrationY) <= cAcciones.getFloat(4))
+                                ) {
+                            if ((Double.parseDouble(calibrationZ)) >= cAcciones.getFloat(5) &&
+                                    (Double.parseDouble(calibrationZ) <= cAcciones.getFloat(6)
+                                    )) {
+                                if (cAcciones.getString(8).equalsIgnoreCase("SILENCIO") && mAudioManager.getRingerMode() == 2) {
+                                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 
-                            } else if (cAcciones.getString(8).equalsIgnoreCase("CORREO")) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + "your_email"));
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
+                                } else if (cAcciones.getString(8).equalsIgnoreCase("NORMAL")) {
+
+                                }
                             }
                         }
                     }
                 }
             }
-
         }
         cAcciones.close();
     }
@@ -542,18 +534,21 @@ public class MyFirstService extends Service implements FusedGyroscopeSensorListe
         cAcciones = Acciones.listado();
 
         while(cAcciones.moveToNext()) {
-            if(cAcciones.getString(1).equalsIgnoreCase("1")){
-                if(Integer.parseInt(cAcciones.getString(7)) == sender) {
-                    switch (sender) {
-                        case 1:
-                            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                            mCount = 0;
-                            break;
-                        case 2:
-                            mCount = 0;
+            if (cAcciones.getString(1) != null) {
+                if (cAcciones.getString(1).equalsIgnoreCase("1")) {
+                    if (Integer.parseInt(cAcciones.getString(7)) == sender) {
+                        if (cAcciones.getString(8).equalsIgnoreCase("CORREO")){
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + "your_email"));
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
+                        }
+                        if (cAcciones.getString(8).equalsIgnoreCase("EVENTO")){
+                            Intent calendarIntent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
+                            calendarIntent.putExtra(CalendarContract.Events.TITLE, "Defensa Práctica");
+                            calendarIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, "ESI");
+                            calendarIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(calendarIntent);
+                        }
                     }
                 }
             }

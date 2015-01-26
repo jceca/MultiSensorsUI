@@ -83,8 +83,7 @@ public class EditarAccionOrientation extends Activity implements SensorEventList
 
     private TextView minZ;
     private TextView maxZ;
-    private String text;
-    private TextView t_nombre;
+
     private Spinner sItems;
 
 
@@ -356,9 +355,8 @@ public class EditarAccionOrientation extends Activity implements SensorEventList
         */
 
         List<String> spinnerArray =  new ArrayList<String>();
-        spinnerArray.add("EMAIL");
         spinnerArray.add("SILENCIO");
-        spinnerArray.add("CORREO");
+        spinnerArray.add("NORMAL");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, spinnerArray);
